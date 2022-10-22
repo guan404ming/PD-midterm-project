@@ -134,7 +134,7 @@ int main()
                             }
                             
                         }
-                        if (isNightShift && newPoint > point + overNightShiftWeight)
+                        if (isNightShift && newPoint > point + overNightShiftWeight * 4)
                         {
                             point = newPoint;
                             bestShiftIdx = newBestShiftIdx;
@@ -142,7 +142,7 @@ int main()
                     }
                     
                     // request
-                    if (noVacationWeight > point)
+                    if (noVacationWeight >= point)
                     {
                         for (int k = 0; k < vacationRequestCount; k++)
                         {
@@ -239,7 +239,7 @@ int main()
                             }
                             
                         }
-                        if (isNightShift && newPoint > point + overNightShiftWeight)
+                        if (isNightShift && newPoint > point + overNightShiftWeight * 4)
                         {
                             point = newPoint;
                             bestShiftIdx = newBestShiftIdx;
@@ -247,7 +247,7 @@ int main()
                     }
                     
                     // request
-                    if (noVacationWeight > point)
+                    if (noVacationWeight >= point)
                     {
                         for (int k = 0; k < vacationRequestCount; k++)
                         {
@@ -316,7 +316,7 @@ int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[2
             }
         }
 
-        if (overNightShiftCount != 0)
+        if (overNightShiftCount > 0)
         {
             bool isNightShift = false;
             for (int j = 18; j <= 23; j++)
@@ -332,8 +332,17 @@ int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[2
         }
         else
         {
-            maxIdx = (cur > max) ? i : maxIdx;
-            max = (cur > max) ? cur : max;
+            bool isNightShift = false;
+            for (int j = 18; j <= 23; j++)
+            {
+                if (shiftTime[i][j] == 1)
+                {
+                    isNightShift = true;
+                    break;
+                }
+            }
+            maxIdx = (cur > max || (cur == max && !isNightShift)) ? i : maxIdx;
+            max = (cur > max || (cur == max && !isNightShift)) ? cur : max;
         } 
     }
     return maxIdx;
@@ -352,6 +361,7 @@ int checkOverNightShift(const int workSchedule[100][31], const int shiftTime[30]
                 if (shiftTime[curShift][j] == 1)
                 {
                     contiOverNightShift += 1;
+                    break;
                 }
             }
         }
@@ -367,6 +377,7 @@ int checkOverNightShift(const int workSchedule[100][31], const int shiftTime[30]
                 if (shiftTime[curShift][j] == 1)
                 {
                     contiOverNightShift += 1;
+                    break;
                 }
             }
         }
