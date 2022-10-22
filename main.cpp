@@ -2,14 +2,14 @@
 using namespace std;
 
 int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[24], int nightShiftCount);
-int checkNightShift(const int workSchedule[100][31], const int shiftTime[30][24], const int day, const int staffIdx);
+int getNightShiftCount(const int workSchedule[100][31], const int shiftTime[30][24], const int day, const int staff);
 
 int main()
 {
     
     // staff max = 100, day max = 31, shift max = 30, vacaiton max = 8, request max = 3100
-    int staffCount = 0, dayCount = 0, shiftCount = 0, vacationCount, noVacationWeight, nightShiftWeight, vacationRequestCount;
-    cin >> staffCount >> dayCount >> shiftCount >> vacationCount >> noVacationWeight >> nightShiftWeight >> vacationRequestCount;
+    int staffCount = 0, dayCount = 0, shiftCount = 0, vacationCount, noVacationWeight, overNightShiftWeight, vacationRequestCount;
+    cin >> staffCount >> dayCount >> shiftCount >> vacationCount >> noVacationWeight >> overNightShiftWeight >> vacationRequestCount;
 
     // [shift:[0 or 1]]
     // [demand18, demand23] is nightshift
@@ -69,7 +69,7 @@ int main()
             demandCount += workerDemand[i][j];
         }
 
-        if (i%2 == 0)
+        if (i % 2 == 0)
         {
             for (int j = 0; j < staffCount; j++)
             {
@@ -104,7 +104,7 @@ int main()
                     }
                     
                     // nightnight shift check
-                    int nightShiftCount = checkNightShift(workSchedule, shiftTime, i, j);
+                    int nightShiftCount = getNightShiftCount(workSchedule, shiftTime, i, j);
                     int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
                     
                     // request
@@ -172,7 +172,7 @@ int main()
                     }
                     
                     // night shift check
-                    int nightShiftCount = checkNightShift(workSchedule, shiftTime, i, j);
+                    int nightShiftCount = getNightShiftCount(workSchedule, shiftTime, i, j);
                     int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
                     
                     // request
@@ -267,19 +267,19 @@ int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[2
     return maxIdx;
 }
 
-int checkNightShift(const int workSchedule[100][31], const int shiftTime[30][24], const int day, const int staffIdx)
+int getNightShiftCount(const int workSchedule[100][31], const int shiftTime[30][24], const int day, const int staff)
 {
-    int contiNightShift = 0;
+    int nightShiftCount = 0;
     if (day >= 6)
     {
         for (int i = day - 6; i < day; i++)
         {
-            int curShift = workSchedule[staffIdx][i];
+            int curShift = workSchedule[staff][i];
             for (int j = 18; j <= 23; j++)
             {
                 if (shiftTime[curShift][j] == 1)
                 {
-                    contiNightShift += 1;
+                    nightShiftCount += 1;
                     break;
                 }
             }
@@ -290,16 +290,16 @@ int checkNightShift(const int workSchedule[100][31], const int shiftTime[30][24]
         
         for (int i = day - 1; i >= 0; i--)
         {
-            int curShift = workSchedule[staffIdx][i];
+            int curShift = workSchedule[staff][i];
             for (int j = 18; j <= 23; j++)
             {
                 if (shiftTime[curShift][j] == 1)
                 {
-                    contiNightShift += 1;
+                    nightShiftCount += 1;
                     break;
                 }
             }
         }
     }
-    return contiNightShift;
+    return nightShiftCount;
 }
