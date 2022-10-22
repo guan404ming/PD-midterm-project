@@ -11,17 +11,14 @@ int main() {
         curWorkDays[i] = workDays[i];
     }
     
-    do
+    while (count != staffCount)
     {
         for (int i = 0; i < staffCount; i++)
         {
             minIdx = (curWorkDays[i] < curWorkDays[minIdx]) ? i : minIdx;
         }
         result[count] = minIdx;
-        curWorkDays[minIdx] = 100000;
+        curWorkDays[minIdx] = 1000;
         count++;
-        
-    } while (count != staffCount);
-
-        
+    }
 }
