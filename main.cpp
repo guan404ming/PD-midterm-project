@@ -130,7 +130,7 @@ int main()
                             if (shiftTime[bestShiftIdx][k] == 1)
                             {
                                 demand[k]--;
-                            } 
+                            }
                         }
                     } 
                 }
@@ -187,7 +187,6 @@ int main()
                             workSchedule[j][i] = 0;
                         } 
                     }
-
                     
                     // assign shift
                     if (workSchedule[j][i] == -1)
