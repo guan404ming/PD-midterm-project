@@ -123,11 +123,14 @@ int main()
                         workDays[j]++;
                         for (int k = 0; k < 24; k++)
                         {
+                            if (demand[k] > 0)
+                            {
+                                demandCount--;
+                            }
                             if (shiftTime[bestShiftIdx][k] == 1)
                             {
                                 demand[k]--;
-                                demandCount--;
-                            }
+                            } 
                         }
                     } 
                 }
@@ -193,11 +196,14 @@ int main()
                         workDays[j]++;
                         for (int k = 0; k < 24; k++)
                         {
+                            if (demand[k] > 0)
+                            {
+                                demandCount--;
+                            }
                             if (shiftTime[bestShiftIdx][k] == 1)
                             {
                                 demand[k]--;
-                                demandCount--;
-                            }
+                            } 
                         }
                     } 
                 }
@@ -242,6 +248,7 @@ int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[2
                 cur++;
             }
         }
+
         bool isNightShift = false;
         for (int j = 18; j <= 23; j++)
         {
