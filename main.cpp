@@ -103,46 +103,17 @@ int main()
                         }
                     }
                     
-                    // nightShiftCount check
+                    // nightnight shift check
                     int nightShiftCount = checkNightShift(workSchedule, shiftTime, i, j);
                     int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
-                    int point = 0;
-                    for (int k = 0; k < 24; k++)
-                    {
-                        if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
-                        {
-                            point++;
-                        }
-                    }
-
-                    if (nightShiftCount != 0)
-                    {
-                        int newBestShiftIdx = getBestShift(shiftTime, shiftCount, demand, 0);
-                        int newPoint = 0;
-                        for (int k = 0; k < 24; k++)
-                        {
-                            if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
-                            {
-                                newPoint++;
-                            }
-                        }
-                        if (newPoint > point + nightShiftWeight * 10)
-                        {
-                            point = newPoint;
-                            bestShiftIdx = newBestShiftIdx;
-                        }
-                    }
                     
                     // request
-                    if (noVacationWeight * 10 >= point)
+                    for (int k = 0; k < vacationRequestCount; k++)
                     {
-                        for (int k = 0; k < vacationRequestCount; k++)
+                        if (vacationRequest[k][0] == j && vacationRequest[k][1] == i)
                         {
-                            if (vacationRequest[k][0] == j && vacationRequest[k][1] == i)
-                            {
-                                workSchedule[j][i] = 0;
-                            } 
-                        }
+                            workSchedule[j][i] = 0;
+                        } 
                     }
                     
                     // assign shift
@@ -200,47 +171,20 @@ int main()
                         }
                     }
                     
-                    // NightShift check
+                    // night shift check
                     int nightShiftCount = checkNightShift(workSchedule, shiftTime, i, j);
                     int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
-                    int point = 0;
-                    for (int k = 0; k < 24; k++)
-                    {
-                        if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
-                        {
-                            point++;
-                        }
-                    }
-
-                    if (nightShiftCount != 0)
-                    {
-                        int newBestShiftIdx = getBestShift(shiftTime, shiftCount, demand, 0);
-                        int newPoint = 0;
-                        for (int k = 0; k < 24; k++)
-                        {
-                            if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
-                            {
-                                newPoint++;
-                            }
-                        }
-                        if (newPoint > point + nightShiftWeight * 10)
-                        {
-                            point = newPoint;
-                            bestShiftIdx = newBestShiftIdx;
-                        }
-                    }
                     
                     // request
-                    if (noVacationWeight * 10 >= point)
+                    
+                    for (int k = 0; k < vacationRequestCount; k++)
                     {
-                        for (int k = 0; k < vacationRequestCount; k++)
+                        if (vacationRequest[k][0] == j && vacationRequest[k][1] == i)
                         {
-                            if (vacationRequest[k][0] == j && vacationRequest[k][1] == i)
-                            {
-                                workSchedule[j][i] = 0;
-                            } 
-                        }
+                            workSchedule[j][i] = 0;
+                        } 
                     }
+
                     
                     // assign shift
                     if (workSchedule[j][i] == -1)
@@ -262,7 +206,6 @@ int main()
                     workSchedule[j][i] = 0;
                 }
             }
-            
         }
         
     }
@@ -311,6 +254,7 @@ int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[2
 
         if (nightShiftCount > 0)
         {
+            // only not night shift
             maxIdx = (cur >= max && !isNightShift) ? i : maxIdx;
             max = (cur >= max && !isNightShift) ? cur : max;
         }
