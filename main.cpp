@@ -8,8 +8,8 @@ int main()
 {
     
     // staff max = 100, day max = 31, shift max = 30, vacaiton max = 8, request max = 3100
-    int staffCount = 0, dayCount = 0, shiftCount = 0, vacationCount, noVacationWeight, NightShiftWeight, vacationRequestCount;
-    cin >> staffCount >> dayCount >> shiftCount >> vacationCount >> noVacationWeight >> NightShiftWeight >> vacationRequestCount;
+    int staffCount = 0, dayCount = 0, shiftCount = 0, vacationCount, noVacationWeight, nightShiftWeight, vacationRequestCount;
+    cin >> staffCount >> dayCount >> shiftCount >> vacationCount >> noVacationWeight >> nightShiftWeight >> vacationRequestCount;
 
     // [shift:[0 or 1]]
     // [demand18, demand23] is nightshift
@@ -118,23 +118,15 @@ int main()
                     if (nightShiftCount != 0)
                     {
                         int newBestShiftIdx = getBestShift(shiftTime, shiftCount, demand, 0);
-                        int newPoint = 0, isNightShift = false;
+                        int newPoint = 0;
                         for (int k = 0; k < 24; k++)
                         {
                             if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
                             {
                                 newPoint++;
                             }
-                            for (int x = 18; x <= 23; x++)
-                            {
-                                if (shiftTime[bestShiftIdx][k] == 1 && x == k)
-                                {
-                                    isNightShift = true;
-                                }
-                            }
-                            
                         }
-                        if (isNightShift && newPoint > point + NightShiftWeight * 5)
+                        if (newPoint > point + nightShiftWeight * 10)
                         {
                             point = newPoint;
                             bestShiftIdx = newBestShiftIdx;
@@ -142,7 +134,7 @@ int main()
                     }
                     
                     // request
-                    if (noVacationWeight >= point)
+                    if (noVacationWeight * 10 >= point)
                     {
                         for (int k = 0; k < vacationRequestCount; k++)
                         {
@@ -223,23 +215,15 @@ int main()
                     if (nightShiftCount != 0)
                     {
                         int newBestShiftIdx = getBestShift(shiftTime, shiftCount, demand, 0);
-                        int newPoint = 0, isNightShift = false;
+                        int newPoint = 0;
                         for (int k = 0; k < 24; k++)
                         {
                             if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
                             {
                                 newPoint++;
                             }
-                            for (int x = 18; x <= 23; x++)
-                            {
-                                if (shiftTime[bestShiftIdx][k] == 1 && x == k)
-                                {
-                                    isNightShift = true;
-                                }
-                            }
-                            
                         }
-                        if (isNightShift && newPoint > point + NightShiftWeight * 5)
+                        if (newPoint > point + nightShiftWeight * 10)
                         {
                             point = newPoint;
                             bestShiftIdx = newBestShiftIdx;
@@ -247,7 +231,7 @@ int main()
                     }
                     
                     // request
-                    if (noVacationWeight >= point)
+                    if (noVacationWeight * 10 >= point)
                     {
                         for (int k = 0; k < vacationRequestCount; k++)
                         {
