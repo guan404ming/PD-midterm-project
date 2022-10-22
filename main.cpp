@@ -3,6 +3,7 @@ using namespace std;
 
 int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[24], int nightShiftCount);
 int getNightShiftCount(const int workSchedule[100][31], const int shiftTime[30][24], const int day, const int staff);
+void handleSortStaff(const int workDays[100], int result[100], int staffCount);
 
 int main()
 {
@@ -69,150 +70,77 @@ int main()
             demandCount += workerDemand[i][j];
         }
 
-        if (i % 2 == 0)
+        int result[100] = {0};
+        handleSortStaff(workDays, result, staffCount);
+
+        for (int j = 0; j < staffCount; j++)
         {
-            for (int j = 0; j < staffCount; j++)
+            if (demandCount > 0)
             {
-                if (demandCount > 0)
+                // total work
+                if (workDays[result[j]] == dayCount - vacationCount)
                 {
-                    // total work
-                    if (workDays[j] == dayCount - vacationCount)
+                    workSchedule[result[j]][i] = 0;
+                }
+
+                // conti work
+                if (i >= 6)
+                {
+                    int contiWorkCount = 0;
+                    for (int k = i - 6; k < i; k++)
                     {
-                        workSchedule[j][i] = 0;
+                        if (workSchedule[result[j]][k] != 0)
+                        {
+                            contiWorkCount++;
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
-                    // conti work
-                    if (i >= 6)
+                    if (contiWorkCount >= 6)
                     {
-                        int contiWorkCount = 0;
-                        for (int k = i - 6; k < i; k++)
-                        {
-                            if (workSchedule[j][k] != 0)
-                            {
-                                contiWorkCount++;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-
-                        if (contiWorkCount >= 6)
-                        {
-                            workSchedule[j][i] = 0;
-                        }
+                        workSchedule[result[j]][i] = 0;
                     }
-                    
-                    // nightnight shift check
-                    int nightShiftCount = getNightShiftCount(workSchedule, shiftTime, i, j);
-                    int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
-                    
-                    // request
-                    for (int k = 0; k < vacationRequestCount; k++)
+                }
+                
+                // nightnight shift check
+                int nightShiftCount = getNightShiftCount(workSchedule, shiftTime, i, result[j]);
+                int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
+                
+                // request
+                for (int k = 0; k < vacationRequestCount; k++)
+                {
+                    if (vacationRequest[k][0] == result[j] && vacationRequest[k][1] == i)
                     {
-                        if (vacationRequest[k][0] == j && vacationRequest[k][1] == i)
-                        {
-                            workSchedule[j][i] = 0;
-                        } 
-                    }
-                    
-                    // assign shift
-                    if (workSchedule[j][i] == -1)
-                    {
-                        workSchedule[j][i] = bestShiftIdx;
-                        workDays[j]++;
-                        for (int k = 0; k < 24; k++)
-                        {
-                            if (demand[k] > 0)
-                            {
-                                demandCount--;
-                            }
-                            if (shiftTime[bestShiftIdx][k] == 1)
-                            {
-                                demand[k]--;
-                            }
-                        }
+                        workSchedule[result[j]][i] = 0;
                     } 
                 }
-                else
+                
+                // assign shift
+                if (workSchedule[result[j]][i] == -1)
                 {
-                    workSchedule[j][i] = 0;
-                }
+                    workSchedule[result[j]][i] = bestShiftIdx;
+                    workDays[result[j]]++;
+                    for (int k = 0; k < 24; k++)
+                    {
+                        if (demand[k] > 0)
+                        {
+                            demandCount--;
+                        }
+                        if (shiftTime[bestShiftIdx][k] == 1)
+                        {
+                            demand[k]--;
+                        }
+                    }
+                } 
             }
-        }
-        else
-        {
-            for (int j = staffCount-1; j >= 0; j--)
+            else
             {
-                if (demandCount > 0)
-                {
-                    // total work
-                    if (workDays[j] == dayCount - vacationCount)
-                    {
-                        workSchedule[j][i] = 0;
-                    }
-
-                    // conti work
-                    if (i >= 6)
-                    {
-                        int contiWorkCount = 0;
-                        for (int k = i - 6; k < i; k++)
-                        {
-                            if (workSchedule[j][k] != -1 && workSchedule[j][k] != 0)
-                            {
-                                contiWorkCount++;
-                            }
-                            else if (workSchedule[j][k] == 0)
-                            {
-                                break;
-                            }
-                        }
-
-                        if (contiWorkCount >= 6)
-                        {
-                            workSchedule[j][i] = 0;
-                        }
-                    }
-                    
-                    // night shift check
-                    int nightShiftCount = getNightShiftCount(workSchedule, shiftTime, i, j);
-                    int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
-                    
-                    // request
-                    
-                    for (int k = 0; k < vacationRequestCount; k++)
-                    {
-                        if (vacationRequest[k][0] == j && vacationRequest[k][1] == i)
-                        {
-                            workSchedule[j][i] = 0;
-                        } 
-                    }
-                    
-                    // assign shift
-                    if (workSchedule[j][i] == -1)
-                    {
-                        workSchedule[j][i] = bestShiftIdx;
-                        workDays[j]++;
-                        for (int k = 0; k < 24; k++)
-                        {
-                            if (demand[k] > 0)
-                            {
-                                demandCount--;
-                            }
-                            if (shiftTime[bestShiftIdx][k] == 1)
-                            {
-                                demand[k]--;
-                            } 
-                        }
-                    } 
-                }
-                else
-                {
-                    workSchedule[j][i] = 0;
-                }
+                workSchedule[result[j]][i] = 0;
             }
         }
-        
     }
 
     // output
@@ -308,4 +236,35 @@ int getNightShiftCount(const int workSchedule[100][31], const int shiftTime[30][
         }
     }
     return nightShiftCount;
+}
+
+void handleSortStaff(const int workDays[100], int result[100], int staffCount)
+{
+    int minIdx = 0, count = 0, curWorkDays[100];
+    for (int i = 0; i < staffCount; i++)
+    {
+        curWorkDays[i] = workDays[i];
+    }
+    
+    while (count != staffCount)
+    {
+        if (count % 2 == 0)
+        {
+            for (int i = 0; i < staffCount; i++)
+            {
+                minIdx = (curWorkDays[i] < curWorkDays[minIdx]) ? i : minIdx;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < staffCount; i++)
+            {
+                minIdx = (curWorkDays[i] <= curWorkDays[minIdx]) ? i : minIdx;
+            }
+        }
+        
+        result[count] = minIdx;
+        curWorkDays[minIdx] = 1000;
+        count++;
+    }
 }
