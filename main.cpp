@@ -22,7 +22,8 @@ int main()
             cin >> shiftTime[i][j]; 
         }
     }
-
+    
+    // shift 0
     for (int i = 0; i < 24; i++)
     {
         cin >> shiftTime[0][i];
@@ -70,6 +71,7 @@ int main()
             demandCount += workerDemand[i][j];
         }
 
+        // sort the staff by how many days they work
         int result[100] = {0};
         handleSortStaff(workDays, result, staffCount);
 
@@ -200,6 +202,7 @@ int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[2
         }
         else
         {   
+            // include all shift, and if equal choose the one which doesn't contain night shift
             maxIdx = (cur > max || (cur == max && !isNightShift)) ? i : maxIdx;
             max = (cur > max || (cur == max && !isNightShift)) ? cur : max;
         }
