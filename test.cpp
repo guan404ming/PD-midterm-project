@@ -73,6 +73,8 @@ int main()
         }
         
         int demandCount = getBestDemandCount(shiftTime, shiftCount, sum, demand);
+
+        // sort the staff by how many days they work
         int result[100] = {0};
         handleSortStaff(workDays, result, staffCount);
 
