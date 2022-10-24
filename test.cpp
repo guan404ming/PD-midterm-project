@@ -248,29 +248,38 @@ int getNightShiftCount(const int workSchedule[100][31], const int shiftTime[30][
 
 int getBestDemandCount(const int shiftTime[30][24], const int shiftCount, const int sum, const int demand[24])
 {
-    int demandCount = 0, cur = 24, curSum = sum;
-
-    while (curSum > 0 && cur >= 12)
+    int demandCount = 0, curSum = sum, curDemand[24] = {0}, max = -1;
+    for (int i = 0; i < 24; i++)
     {
-        int maxIdx = -1, max = -1;
+        curDemand[i] = demand[i];
+    }
+
+    while (curSum > 0 && max != 0)
+    {
+        int maxIdx = -1;
+        max = -1;
         for (int i = 0; i < shiftCount; i++)
         {
-            cur = 0;
+            int cur = 0;
             for (int j = 0; j < 24; j++)
             {
-                if (demand[j] > 0 && shiftTime[i][j] == 1)
+                if (curDemand[j] > 0 && shiftTime[i][j] == 1)
                 {
                     cur++;
+                    curDemand[j]--;
                 }
             }
             maxIdx = (cur > max) ? i : maxIdx;
             max = (cur > max) ? cur : max;
         }
-        cur = max;
         curSum -= max;
-        demandCount++;
-        // cout << "result( " << curSum << " " << cur << " )\n";
+        if (curSum > 0)
+        {
+            demandCount++;
+        }
+       
     }
+    // cout << "testCount " <<  demandCount << "\n";
     // cout << "==============================\n";
     return demandCount;
 }

@@ -137,7 +137,7 @@ int main()
                         {
                             demandCount--;
                         }
-                        if (shiftTime[bestShiftIdx][k] == 1)
+                        if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
                         {
                             demand[k]--;
                         }
