@@ -1,4 +1,4 @@
-# 2022 Programming Design - Midtern Project
+# 2022 Programming Design - Midterm Project
 
 ## 目標： ${ min }$ ( 總缺工數 + ${w1}$ × 未滿足的休假需求總數 + ${w2}$ × 超額夜班總數 )
 
