@@ -52,9 +52,9 @@ int main()
 
     // [[staff, shift]]
     int workDays[100] = {0}, workSchedule[100][31];
-    for (int i = 0; i < staffCount; i++)
+    for (int i = 0; i < 100; i++)
     {
-        for (int j = 0; j < dayCount; j++)
+        for (int j = 0; j < 31; j++)
         {
             workSchedule[i][j] = -1;
         }
@@ -75,9 +75,11 @@ int main()
         int result[100] = {0};
         handleSortStaff(workDays, result, staffCount);
 
+        bool hasPoint = true;
+        int count = 0;
         for (int j = 0; j < staffCount; j++)
         {
-            if (demandCount > 0)
+            if (demandCount > 75 && hasPoint)
             {
                 // total work
                 if (workDays[result[j]] == dayCount - vacationCount)
@@ -131,24 +133,34 @@ int main()
                 {
                     workSchedule[result[j]][i] = bestShiftIdx;
                     workDays[result[j]]++;
+                    int point = 0;
                     for (int k = 0; k < 24; k++)
                     {
-                        if (demand[k] > 0)
-                        {
-                            demandCount--;
-                        }
                         if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
                         {
                             demand[k]--;
+                            point++;
                         }
                     }
-                } 
+                    // cout << "point " << point << "\n";
+                    if (point > 4)
+                    {
+                        demandCount -= point;
+                        count++;
+                    }
+                    else
+                    {
+                        hasPoint = false;
+                    }
+                }
             }
             else
             {
                 workSchedule[result[j]][i] = 0;
             }
+            // cout << "demandCount " << demandCount << "\n";
         }
+        // cout << "count " << count << "\n";
     }
 
     // output
