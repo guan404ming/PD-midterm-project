@@ -30,7 +30,8 @@ int main()
     {
         cin >> shiftTime[0][i];
     }
-
+    shiftCount++;
+    
     // [day:[demand1, demand2,...,demand24]]
     int workerDemand[31][24];
     for (int i = 0; i < dayCount; i++)
@@ -96,6 +97,7 @@ int main()
         }
         vacationTypeCount++;
     }
+
     for (int i = 0; i < staffCount; i++)
     {
         int count = 0;
@@ -116,6 +118,7 @@ int main()
             }
         }
     }
+
     for (int i = 0; i < dayCount; i++)
     {
         int demand[24];
@@ -131,11 +134,12 @@ int main()
         {
             if (workSchedule[result[j]][i] != 0)
             {
-                int nightShiftCount = getNightShiftCount(workSchedule, shiftTime, i, result[j]);
-                int bestShift = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
-                workSchedule[result[j]][i] = (getShouldBreak(i, result[j], workDays, dayCount, vacationCount, workSchedule)) ? 0 : -1;
-                if (workSchedule[result[j]][i] != 0)
+                bool shouldBreak = getShouldBreak(i, result[j], workDays, dayCount, vacationCount, workSchedule);
+                if (!shouldBreak)
                 {
+                    int nightShiftCount = getNightShiftCount(workSchedule, shiftTime, i, result[j]);
+                    int bestShift = getBestShift(shiftTime, shiftCount, demand, nightShiftCount);
+
                     workSchedule[result[j]][i] = bestShift;
                     workDays[result[j]]++;
                     for (int k = 0; k < 24; k++)
@@ -145,6 +149,10 @@ int main()
                             demand[k]--;
                         }
                     }
+                }
+                else
+                {
+                    workSchedule[result[j]][i] = 0;
                 }
             }
         }
@@ -244,6 +252,41 @@ int getNightShiftCount(const int workSchedule[100][31], const int shiftTime[30][
     return nightShiftCount;
 }
 
+bool getShouldBreak(const int day, const int staff, const int workDays[100], const int dayCount, const int vacationCount, const int workSchedule[100][31]) {
+    
+    bool shouldBreak = false;
+
+    // total work
+    if (workDays[staff] == dayCount - vacationCount)
+    {
+        shouldBreak = true;
+    }
+
+    // conti work
+    if (day >= 6)
+    {
+        int contiWorkCount = 0;
+        for (int k = day - 6; k < day; k++)
+        {
+            if (workSchedule[staff][k] != 0)
+            {
+                contiWorkCount++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (contiWorkCount >= 6)
+        {
+            shouldBreak = true;
+        }
+    }
+
+    return shouldBreak;
+}
+
 void handleSortStaff(const int workDays[100], int result[100], int staffCount, const int day, const int workSchedule[100][31])
 {
     int minIdx = 0, count = 0, curWorkDays[100];
@@ -294,39 +337,4 @@ void handleSortStaff(const int workDays[100], int result[100], int staffCount, c
         curWorkDays[minIdx] = 1000;
         count++;
     }
-}
-
-bool getShouldBreak(const int day, const int staff, const int workDays[100], const int dayCount, const int vacationCount, const int workSchedule[100][31]) {
-    
-    bool shouldBreak = false;
-
-    // total work
-    if (workDays[staff] == dayCount - vacationCount)
-    {
-        shouldBreak = true;
-    }
-
-    // conti work
-    if (day >= 6)
-    {
-        int contiWorkCount = 0;
-        for (int k = day - 6; k < day; k++)
-        {
-            if (workSchedule[staff][k] != 0)
-            {
-                contiWorkCount++;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        if (contiWorkCount >= 6)
-        {
-            shouldBreak = true;
-        }
-    }
-
-    return shouldBreak;
 }
