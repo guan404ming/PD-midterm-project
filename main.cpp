@@ -214,7 +214,6 @@ void handleSortStaff(const int workDays[100], int result[100], int staffCount, c
                     }
                 }
             }
-
             for (int k = day - 6; k < day; k++)
             {
                 if (k >= 0)
@@ -229,14 +228,13 @@ void handleSortStaff(const int workDays[100], int result[100], int staffCount, c
                     }
                 }
             }
-
             if (type == 0)
             {
-                minIdx = (curWorkDays[i] < curWorkDays[minIdx]) ? i : minIdx;
+                minIdx = (curWorkDays[i] - contiWorkCount / 2 < curWorkDays[minIdx] - minConti / 2) ? i : minIdx;
             }
             else
             {
-                minIdx = (curWorkDays[i] - contiWorkCount < curWorkDays[minIdx] - minConti) ? i : minIdx;
+                minIdx = (curWorkDays[i] - contiWorkCount * 10 < curWorkDays[minIdx] - minConti * 10) ? i : minIdx;
             }
         }
         
