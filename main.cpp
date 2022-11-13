@@ -99,7 +99,7 @@ int getBestShift(const int shiftTime[30][24], const int shiftCount, int demand[2
             max = (cur >= max && !isNightShift) ? cur : max;
         }
         else
-        {
+        {   
             // include all shift, and if equal choose the one which doesn't contain night shift
             maxIdx = (cur > max || (cur == max && !isNightShift)) ? i : maxIdx;
             max = (cur > max || (cur == max && !isNightShift)) ? cur : max;
@@ -164,7 +164,7 @@ int getPoint(const int dayCount, const int staffCount, const int workerDemand[31
 // sort the day by the worker demand
 void handleSortDay(int result[31], const int dayCount, const int workerDemand[31][24])
 {
-    int maxIdx = 0, count = 0, curWorkerDemand[31] = {0};
+    int maxIdx = -1, count = 0, curWorkerDemand[31] = {0};
     
     for (int i = 0; i < dayCount; i++)
     {
@@ -214,7 +214,7 @@ void handleSortStaff(const int workDays[100], int result[100], int staffCount, c
                     }
                 }
             }
-            contiWorkCount = (contiWorkCount > 6) ? contiWorkCount : -(contiWorkCount);
+
             for (int k = day - 6; k < day; k++)
             {
                 if (k >= 0)
@@ -229,14 +229,14 @@ void handleSortStaff(const int workDays[100], int result[100], int staffCount, c
                     }
                 }
             }
-            minConti = (minConti > 6) ? minConti : -(minConti);
+
             if (type == 0)
             {
                 minIdx = (curWorkDays[i] < curWorkDays[minIdx]) ? i : minIdx;
             }
             else
             {
-                minIdx = (curWorkDays[i] + contiWorkCount < curWorkDays[minIdx] + minConti) ? i : minIdx;
+                minIdx = (curWorkDays[i] - contiWorkCount < curWorkDays[minIdx] - minConti) ? i : minIdx;
             }
         }
         
@@ -294,7 +294,7 @@ int main()
     {
         for (int j = 0; j < 24; j++)
         {
-            cin >> shiftTime[i][j];
+            cin >> shiftTime[i][j]; 
         }
     }
     
@@ -322,7 +322,7 @@ int main()
         {
             cin >> vacationRequest[j][i];
             vacationRequest[j][i]--;
-        }
+        } 
     }
 
     // [[staff, shift]]
@@ -371,7 +371,7 @@ int main()
                     if (vacationRequest[k][0] == result[j] && vacationRequest[k][1] == i)
                     {
                         curSchedule[result[j]][i] = 0;
-                    }
+                    } 
                 }
                 
                 // assign shift
@@ -387,7 +387,7 @@ int main()
                             demand[k]--;
                         }
                     }
-                }
+                } 
             }
             else
             {
@@ -430,7 +430,7 @@ int main()
                     if (vacationRequest[k][0] == result[j] && vacationRequest[k][1] == i)
                     {
                         curSchedule[result[j]][i] = 0;
-                    }
+                    } 
                 }
             
                 // assign shift
@@ -469,11 +469,6 @@ int main()
     for (int i = 0; i < 7; i++)
     {
         int count = 0, cur[10] = {0};
-        if (i == 6)
-        {
-            cur[count] = 0;
-            count++;
-        }
         
         for (int j = 0; j < 5; j++)
         {
@@ -507,7 +502,7 @@ int main()
             {
                 curSchedule[i][vacationRequest[j][1]] = 0;
                 count++;
-            }
+            } 
         }
 
         for (int j = 0; j < vacationCount - count; j++)
@@ -558,13 +553,25 @@ int main()
     // type 4
     for (int i = 0; i < staffCount; i++)
     {
-        int count = 0, shift = (i % vacationTypeCount + 1 == vacationTypeCount) ? 0 :  i % vacationTypeCount + 1;;
+        int count = 0, shift = (i % vacationTypeCount + 1 == vacationTypeCount) ? 0 :  i % vacationTypeCount + 1;
         for (int j = 0; j < vacationRequestCount; j++)
         {
-            if (vacationRequest[j][0] == i && vacationRequest[j][1] >= 4 && count <= 2)
+            if (vacationRequest[j][0] == i && count <= 2)
             {
-                curSchedule[i][vacationRequest[j][1]] = 0;
-                count++;
+                int yes = 1;
+                for (int k = 0; k < 5; k++)
+                {
+                    if (vacationRequest[j][1] == resultD[k])
+                    {
+                        yes = 0;
+                        break;
+                    }
+                }
+                if (yes)
+                {
+                    curSchedule[i][vacationRequest[j][1]] = 0;
+                    count++;
+                }
             }
         }
         
