@@ -238,7 +238,7 @@ void handleSortStaff(const int workDays[100], int result[100], int staffCount, c
             }
             else
             {
-                minIdx = (curWorkDays[i] - contiWorkCount * 10 < curWorkDays[minIdx] - minConti * 10) ? i : minIdx;
+                minIdx = (curWorkDays[i] - contiWorkCount * 4 < curWorkDays[minIdx] - minConti * 4) ? i : minIdx;
             }
         }
         
@@ -253,7 +253,7 @@ void handleComeparePoint(const int dayCount, const int staffCount, const int wor
 {
     int cur = getPoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, vacationRequestCount, noVacationWeight, vacationRequest);
     int min = getPoint(dayCount, staffCount, workerDemand, workSchedule, shiftTime, overNightShiftWeight, vacationRequestCount, noVacationWeight, vacationRequest);
-    cout << cur << " " << min << "\n";
+    // cout << cur << " " << min << "\n";
     if (cur < min)
     {
         for (int i = 0; i < staffCount; i++)
@@ -344,130 +344,78 @@ int main()
     // ================================================================ //
 
     // type 1
-    for (int i = 0; i < dayCount; i++)
+    for (int P = 0; P < 20; P++)
     {
-        int demand[24], demandCount = 0;
-        for (int j = 0; j < 24; j++)
+        for (int T = 0; T < 2; T++)
         {
-            demand[j] = workerDemand[i][j];
-            demandCount += workerDemand[i][j];
-        }
-
-        // sort the staff by how many days they work
-        int result[100] = {0};
-        handleSortStaff(workDays, result, staffCount, i, curSchedule, 0);
-
-        for (int j = 0; j < staffCount; j++)
-        {
-            if (demandCount > 0)
+            for (int i = 0; i < dayCount; i++)
             {
-                // conti work and total work
-                handleShouldBreak(i, result[j], workDays, dayCount, vacationCount, curSchedule);
-                
-                // nightnight shift
-                int nightShiftCount = getNightShiftCount(curSchedule, shiftTime, i, result[j]);
-                int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount, 0, overNightShiftWeight);
-                
-                // request
-                for (int k = 0; k < vacationRequestCount; k++)
+                int demand[24], demandCount = 0;
+                for (int j = 0; j < 24; j++)
                 {
-                    if (vacationRequest[k][0] == result[j] && vacationRequest[k][1] == i)
-                    {
-                        curSchedule[result[j]][i] = 0;
-                    } 
+                    demand[j] = workerDemand[i][j];
+                    demandCount += workerDemand[i][j];
                 }
-                
-                // assign shift
-                if (curSchedule[result[j]][i] == -1)
+
+                // sort the staff by how many days they work
+                int result[100] = {0};
+                handleSortStaff(workDays, result, staffCount, i, curSchedule, T);
+
+                bool hasPoint = true;
+                for (int j = 0; j < staffCount; j++)
                 {
-                    curSchedule[result[j]][i] = bestShiftIdx;
-                    workDays[result[j]]++;
-                    for (int k = 0; k < 24; k++)
+                    if (demandCount > 0 && hasPoint)
                     {
-                        if (demand[k] > 0 && shiftTime[bestShiftIdx][k] == 1)
+                        // conti work and total work
+                        handleShouldBreak(i, result[j], workDays, dayCount, vacationCount, curSchedule);
+
+                        // nightnight shift
+                        int nightShiftCount = getNightShiftCount(curSchedule, shiftTime, i, result[j]);
+                        int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount, 0, overNightShiftWeight);
+                        
+                        // request
+                        for (int k = 0; k < vacationRequestCount; k++)
                         {
-                            demandCount--;
-                            demand[k]--;
+                            if (vacationRequest[k][0] == result[j] && vacationRequest[k][1] == i)
+                            {
+                                curSchedule[result[j]][i] = 0;
+                            } 
+                        }
+                    
+                        // assign shift
+                        if (curSchedule[result[j]][i] == -1)
+                        {
+                            curSchedule[result[j]][i] = bestShiftIdx;
+                            if (bestShiftIdx != 0) workDays[result[j]]++;
+                            int point = 0;
+                            for (int k = 0; k < 24; k++)
+                            {
+                                if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
+                                {
+                                    demand[k]--;
+                                    point++;
+                                    demandCount--;
+                                }
+                            }
+                            if (point < P)
+                            {
+                                hasPoint = false;
+                            }
                         }
                     }
-                } 
-            }
-            else
-            {
-                curSchedule[result[j]][i] = 0;
-            }
-        }
-    }
-    handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
-    handleRestart(curSchedule, workDays, dayCount, staffCount);
-
-    // type 2
-    for (int i = 0; i < dayCount; i++)
-    {
-        int demand[24], demandCount = 0;
-        for (int j = 0; j < 24; j++)
-        {
-            demand[j] = workerDemand[i][j];
-            demandCount += workerDemand[i][j];
-        }
-
-        // sort the staff by how many days they work
-        int result[100] = {0};
-        handleSortStaff(workDays, result, staffCount, i, curSchedule, 0);
-
-        bool hasPoint = true;
-        for (int j = 0; j < staffCount; j++)
-        {
-            if (demandCount > 0 && hasPoint)
-            {
-                // conti work and total work
-                handleShouldBreak(i, result[j], workDays, dayCount, vacationCount, curSchedule);
-
-                // nightnight shift
-                int nightShiftCount = getNightShiftCount(curSchedule, shiftTime, i, result[j]);
-                int bestShiftIdx = getBestShift(shiftTime, shiftCount, demand, nightShiftCount, 0, overNightShiftWeight);
-                
-                // request
-                for (int k = 0; k < vacationRequestCount; k++)
-                {
-                    if (vacationRequest[k][0] == result[j] && vacationRequest[k][1] == i)
+                    else
                     {
                         curSchedule[result[j]][i] = 0;
-                    } 
-                }
-            
-                // assign shift
-                if (curSchedule[result[j]][i] == -1)
-                {
-                    curSchedule[result[j]][i] = bestShiftIdx;
-                    workDays[result[j]]++;
-                    int point = 0;
-                    for (int k = 0; k < 24; k++)
-                    {
-                        if (shiftTime[bestShiftIdx][k] == 1 && demand[k] > 0)
-                        {
-                            demand[k]--;
-                            point++;
-                            demandCount--;
-                        }
-                    }
-                    if (point < 7)
-                    {
-                        hasPoint = false;
                     }
                 }
             }
-            else
-            {
-                curSchedule[result[j]][i] = 0;
-            }
+
+            handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
+            handleRestart(curSchedule, workDays, dayCount, staffCount);
         }
     }
-
-    handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
-    handleRestart(curSchedule, workDays, dayCount, staffCount);
     
-    // type 3
+    // type 2
     int vacation[7][10] = {0}, vacationTypeCount = 0;
     for (int i = 0; i < 7; i++)
     {
@@ -494,180 +442,145 @@ int main()
         }
         vacationTypeCount++;
     }
-    for (int i = 0; i < staffCount; i++)
+    for (int V = 0; V < 7; V++)
     {
-        int count = 0, shift = (i % vacationTypeCount + 1 == vacationTypeCount) ? 0 :  i % vacationTypeCount + 1;
-        for (int j = 0; j < vacationRequestCount; j++)
+        for (int D = 0; D < 6; D++)
         {
-            if (vacationRequest[j][0] == i)
+            for (int i = 0; i < staffCount; i++)
             {
-                curSchedule[i][vacationRequest[j][1]] = 0;
-                count++;
-            } 
-        }
-
-        for (int j = 0; j < vacationCount - count; j++)
-        {
-            
-            curSchedule[i][vacation[shift][j]] = 0;
-        }
-    }
-    for (int i = 0; i < dayCount; i++)
-    {
-        int demand[24];
-        for (int j = 0; j < 24; j++)
-        {
-            demand[j] = workerDemand[i][j];
-        }
-
-        int result[100] = {0};
-        handleSortStaff(workDays, result, staffCount, i, curSchedule, 1);
-
-        for (int j = 0; j < staffCount; j++)
-        {
-            if (curSchedule[result[j]][i] == -1)
-            {
-                int nightShiftCount = getNightShiftCount(curSchedule, shiftTime, i, result[j]);
-                int bestShift = getBestShift(shiftTime, shiftCount, demand, nightShiftCount, 0, overNightShiftWeight);
-
-                handleShouldBreak(i, result[j], workDays, dayCount, vacationCount, curSchedule);
+                int count = 0, shift = (i + V) % vacationTypeCount;
+                for (int j = 0; j < vacationRequestCount; j++)
+                {
+                    if (vacationRequest[j][0] == i && count <= 2)
+                    {
+                        int yes = 1;
+                        for (int k = 0; k < 5; k++)
+                        {
+                            if (vacationRequest[j][1] == resultD[k])
+                            {
+                                yes = 0;
+                                break;
+                            }
+                        }
+                        if (yes)
+                        {
+                            curSchedule[i][vacationRequest[j][1]] = 0;
+                            count++;
+                        }
+                    }
+                }
                 
-                if (curSchedule[result[j]][i] == -1)
+                for (int j = 0; j < (vacationCount - count); j++)
                 {
-                    curSchedule[result[j]][i] = bestShift;
-                    workDays[result[j]]++;
-                    for (int k = 0; k < 24; k++)
+                    curSchedule[i][vacation[shift][j]] = 0;
+                }
+            }
+            for (int i = 0; i < dayCount; i++)
+            {
+                int demand[24] = {0};
+                for (int j = 0; j < 24; j++)
+                {
+                    demand[j] = workerDemand[resultD[i]][j];
+                }
+
+                for (int j = 0; j < staffCount; j++)
+                {
+                    
+                    if (curSchedule[j][resultD[i]] == -1 || i <= D)
                     {
-                        if (shiftTime[bestShift][k] == 1 && demand[k] > 0)
+                        handleShouldBreak(resultD[i], j, workDays, dayCount, vacationCount, curSchedule);
+                        int bestShift = getBestShift(shiftTime, shiftCount, demand, 0, 1, overNightShiftWeight);
+                        if (curSchedule[j][resultD[i]] == -1)
                         {
-                            demand[k]--;
+                            curSchedule[j][resultD[i]] = bestShift;
+                            if (bestShift != 0) workDays[j]++;
+                            for (int k = 0; k < 24; k++)
+                            {
+                                if (shiftTime[bestShift][k] == 1 && demand[k] > 0)
+                                {
+                                    demand[k]--;
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-    }
-
-    handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
-    handleRestart(curSchedule, workDays, dayCount, staffCount);
-
-    // type 4
-    for (int i = 0; i < staffCount; i++)
-    {
-        int count = 0, shift = (i % vacationTypeCount + 1 == vacationTypeCount) ? 0 :  i % vacationTypeCount + 1;
-        for (int j = 0; j < vacationRequestCount; j++)
-        {
-            if (vacationRequest[j][0] == i && count <= 2)
-            {
-                int yes = 1;
-                for (int k = 0; k < 5; k++)
-                {
-                    if (vacationRequest[j][1] == resultD[k])
-                    {
-                        yes = 0;
-                        break;
-                    }
-                }
-                if (yes)
-                {
-                    curSchedule[i][vacationRequest[j][1]] = 0;
-                    count++;
-                }
-            }
-        }
-        
-        for (int j = 0; j < (vacationCount - count); j++)
-        {
-            curSchedule[i][vacation[shift][j]] = 0;
-        }
-    }
-    for (int i = 0; i < dayCount; i++)
-    {
-        int demand[24] = {0};
-        for (int j = 0; j < 24; j++)
-        {
-            demand[j] = workerDemand[resultD[i]][j];
-        }
-
-        for (int j = 0; j < staffCount; j++)
-        {
             
-            if (curSchedule[j][resultD[i]] == -1 || i <= 5)
+            handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
+            handleRestart(curSchedule, workDays, dayCount, staffCount);
+        }
+    }
+
+    // type 3
+    for (int V = 0; V < 7; V++)
+    {
+        for (int T = 0; T < 2; T++)
+        {
+            for (int i = 0; i < staffCount; i++)
             {
-                handleShouldBreak(resultD[i], j, workDays, dayCount, vacationCount, curSchedule);
-                int bestShift = getBestShift(shiftTime, shiftCount, demand, 0, 1, overNightShiftWeight);
-                if (curSchedule[j][resultD[i]] == -1)
+                int count = 0, shift = (i+V) % vacationTypeCount;
+                for (int j = 0; j < vacationRequestCount; j++)
                 {
-                    curSchedule[j][resultD[i]] = bestShift;
-                    workDays[j]++;
-                    for (int k = 0; k < 24; k++)
+                    if (vacationRequest[j][0] == i)
                     {
-                        if (shiftTime[bestShift][k] == 1 && demand[k] > 0)
+                        curSchedule[i][vacationRequest[j][1]] = 0;
+                        count++;
+                    } 
+                }
+
+                for (int j = 0; j < vacationCount - count; j++)
+                {
+                    
+                    curSchedule[i][vacation[shift][j]] = 0;
+                }
+            }
+            for (int i = 0; i < dayCount; i++)
+            {
+                int demand[24];
+                for (int j = 0; j < 24; j++)
+                {
+                    demand[j] = workerDemand[i][j];
+                }
+
+                int result[100] = {0}, hasPoint = 1;
+                handleSortStaff(workDays, result, staffCount, i, curSchedule, T);
+
+                for (int j = 0; j < staffCount; j++)
+                {
+                    if (curSchedule[result[j]][i] == -1)
+                    {
+                        int nightShiftCount = getNightShiftCount(curSchedule, shiftTime, i, result[j]);
+                        int bestShift = getBestShift(shiftTime, shiftCount, demand, nightShiftCount, 0, overNightShiftWeight);
+
+                        handleShouldBreak(i, result[j], workDays, dayCount, vacationCount, curSchedule);
+                        
+                        if (curSchedule[result[j]][i] == -1 && hasPoint)
                         {
-                            demand[k]--;
+                            int point = 0;
+                            curSchedule[result[j]][i] = bestShift;
+                            if (bestShift != 0) workDays[result[j]]++;
+                            for (int k = 0; k < 24; k++)
+                            {
+                                if (shiftTime[bestShift][k] == 1 && demand[k] > 0)
+                                {
+                                    demand[k]--;
+                                    point++;
+                                }
+                            }
+                            hasPoint = (point <= 0 && bestShift != 0) ? 0 : 1;
+                        }
+                        else
+                        {
+                            curSchedule[result[j]][i] = 0;
                         }
                     }
                 }
             }
+            handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
+            handleRestart(curSchedule, workDays, dayCount, staffCount);
         }
     }
     
-    handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
-    handleRestart(curSchedule, workDays, dayCount, staffCount);
-
-    // type 5 (all shift contain night shift)
-    int N = 0;
-    for (int i = 0; i < shiftCount; i++)
-    {
-        for (int j = 18; j <= 23; j++)
-        {
-            if (shiftTime[i][j] == 1)
-            {
-                N += 1;
-                break;
-            }
-        }
-    }
-
-    if (N == shiftCount - 1)
-    {
-        int demand[24] = {0};
-        for (int i = 0; i < dayCount; i++)
-        {
-            for (int j = 0; j < 24; j++)
-            {
-                demand[j] = workerDemand[i][j];
-            }
-        }
-        
-        for (int i = 0; i < staffCount; i++)
-        {
-            for (int j = 0; j < vacationRequestCount; j++)
-            {
-                if (vacationRequest[j][0] == i)
-                {
-                    curSchedule[i][vacationRequest[j][1]] = 0;
-                } 
-            }
-            
-            for (int j = 0; j < dayCount; j++)
-            {
-                int bestShift = getBestShift(shiftTime, shiftCount, demand, 0, 1, overNightShiftWeight);
-                
-                if (curSchedule[i][j] != 0)
-                {
-                    curSchedule[i][j] = bestShift;
-                }
-                else
-                {
-                    curSchedule[i][j] = 0;
-                }
-            }
-        }
-    }
-
-    handleComeparePoint(dayCount, staffCount, workerDemand, curSchedule, shiftTime, overNightShiftWeight, workSchedule, vacationRequestCount, noVacationWeight, vacationRequest);
-
     // output
     for (int i = 0; i < staffCount; i++)
     {
