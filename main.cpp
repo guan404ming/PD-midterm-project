@@ -344,9 +344,9 @@ int main()
     // ================================================================ //
 
     // type 1
-    for (int P = 0; P < 20; P++)
+    for (int pointStantard = 0; pointStantard < 20; pointStantard++)
     {
-        for (int T = 0; T < 2; T++)
+        for (int type = 0; type < 2; type++)
         {
             for (int i = 0; i < dayCount; i++)
             {
@@ -359,7 +359,7 @@ int main()
 
                 // sort the staff by how many days they work
                 int result[100] = {0};
-                handleSortStaff(workDays, result, staffCount, i, curSchedule, T);
+                handleSortStaff(workDays, result, staffCount, i, curSchedule, type);
 
                 bool hasPoint = true;
                 for (int j = 0; j < staffCount; j++)
@@ -397,7 +397,7 @@ int main()
                                     demandCount--;
                                 }
                             }
-                            if (point < P)
+                            if (point < pointStantard)
                             {
                                 hasPoint = false;
                             }
@@ -442,27 +442,27 @@ int main()
         }
         vacationTypeCount++;
     }
-    for (int V = 0; V < 7; V++)
+    for (int move = 0; move < 7; move++)
     {
-        for (int D = 0; D < 6; D++)
+        for (int rank = 0; rank < 6; rank++)
         {
             for (int i = 0; i < staffCount; i++)
             {
-                int count = 0, shift = (i + V) % vacationTypeCount;
+                int count = 0, shift = (i + move) % vacationTypeCount;
                 for (int j = 0; j < vacationRequestCount; j++)
                 {
                     if (vacationRequest[j][0] == i && count <= 2)
                     {
-                        int yes = 1;
+                        int isRankBiggerThanFive = 1;
                         for (int k = 0; k < 5; k++)
                         {
                             if (vacationRequest[j][1] == resultD[k])
                             {
-                                yes = 0;
+                                isRankBiggerThanFive = 0;
                                 break;
                             }
                         }
-                        if (yes)
+                        if (isRankBiggerThanFive)
                         {
                             curSchedule[i][vacationRequest[j][1]] = 0;
                             count++;
@@ -486,7 +486,7 @@ int main()
                 for (int j = 0; j < staffCount; j++)
                 {
                     
-                    if (curSchedule[j][resultD[i]] == -1 || i <= D)
+                    if (curSchedule[j][resultD[i]] == -1 || i <= rank)
                     {
                         handleShouldBreak(resultD[i], j, workDays, dayCount, vacationCount, curSchedule);
                         int bestShift = getBestShift(shiftTime, shiftCount, demand, 0, 1, overNightShiftWeight);
@@ -512,13 +512,13 @@ int main()
     }
 
     // type 3
-    for (int V = 0; V < 7; V++)
+    for (int move = 0; move < 7; move++)
     {
-        for (int T = 0; T < 2; T++)
+        for (int type = 0; type < 2; type++)
         {
             for (int i = 0; i < staffCount; i++)
             {
-                int count = 0, shift = (i+V) % vacationTypeCount;
+                int count = 0, shift = (i+move) % vacationTypeCount;
                 for (int j = 0; j < vacationRequestCount; j++)
                 {
                     if (vacationRequest[j][0] == i)
@@ -543,7 +543,7 @@ int main()
                 }
 
                 int result[100] = {0}, hasPoint = 1;
-                handleSortStaff(workDays, result, staffCount, i, curSchedule, T);
+                handleSortStaff(workDays, result, staffCount, i, curSchedule, type);
 
                 for (int j = 0; j < staffCount; j++)
                 {
