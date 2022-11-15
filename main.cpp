@@ -567,7 +567,7 @@ int main()
                                     point++;
                                 }
                             }
-                            hasPoint = (point <= 0 && bestShift != 0) ? 0 : 1;
+                            hasPoint = (point == 0 && bestShift != 0) ? 0 : 1;
                         }
                         else
                         {
