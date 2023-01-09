@@ -16,13 +16,13 @@
 
 ## Input
 
-- The first row stores seven integers: n_I, n_J, n_K, L, w_1, w_2 and R.
+- The first row stores seven integers: ${n_I}$ , ${n_J}$ , ${n_K}$ , ${L}$ , ${w_1}$ , ${w_2}$ and ${R}$ .
 
 - The following information is divided into three parts:
 
     1. Scheduling status of each time period for the ${n_K}$ types of shifts
         - Each column contains 24 integers, indicating the time periods that the k-th shift type needs to be on duty.
-        - The ${n_K + 2}$th column will always store the scheduling status of the 0th shift (complete leave)
+        - The ${n_K + 2}$ th column will always store the scheduling status of the 0th shift (complete leave)
 
     2. Manpower demand for each time period on ${n_J}$ days
         - Each column contains 24 integers, indicating the manpower demand for each time period on the ${j}$th day.
