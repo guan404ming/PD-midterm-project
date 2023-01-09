@@ -1,43 +1,38 @@
 # 2022 Programming Design - Midterm Project
+- 🍒 This is the midterm project of Programming Design instructed by Prof. Ling-Chieh Kung at National Taiwan University
+- 🏅 Our program is rated 1st in 02 class, 4th / 50 teams
 
-## Goal： ${ min }$ ( 總缺工數 + ${w1}$ × 未滿足的休假需求總數 + ${w2}$ × 超額夜班總數 )
+## Goal
 
-總共有  ${n_I}$  位員工， ${n_K}$  代表除了第 0 號班型(休假班型)之外的班型個數
-而此程式必須在每個月月中要安排次月共 ${n_J}$ 天的班表
+- There are a total of  ${n_I}$  employees, and  ${n_K}$  represents the number of shift types.
+- This program must schedule a shift schedule for  ${n_J}$  days in the following month.
+- ${ min }$ ( labor shortage + ${w1}$ × unfulfilled leave requests + ${w2}$ × total excess overtime hours )
 
-- 三點限制需要絕對遵守
-    - 每位員工在接下來的 ${n_J}$ 天排班中，至少有 ${L}$ 天完整的休假
-    - 每位員工每連續的七天中至少要有一天完整休假
-    - 每位員工在一天內只能被指派恰好一種班
-- 我們希望在滿足限制的前提下最小化以下數值
-    - 總缺工數 - 為接下來 ${n_J}$ 天中共 24 ${n_J}$ 個時段的缺工人數總和
-        - 缺工人數  =  ${max}$ {表定人力需求 − 實際值班人數, 0}
-    - 未滿足的休假需求總數 - 當某員工提出希望在某一天休假，但仍被指派去上班，未滿足的休假需求總數就往上加 1
-    - 七天內的超額夜班總數 - 當一位員工在連續七天中被指派兩天含夜班的班型，則他在這七天中的超額夜班數為 2 − 1 = 1 天
+## Limitation
 
-        - 「連續七天」的檢查是以「rolling window」的方式進行的，也就是這些「連續七天」是會重疊的
+- Each employee must have at least L days of complete leave during the next n_J days of scheduling.
+- Each employee must have at least one day of complete leave within every consecutive seven days.
+- Each employee can only be assigned exactly one shift type per day.
 
-## Input：
+## Input
 
-第一列存放七個整數 ${n_I、n_J、n_K、L、w_1、w_2}$ 和 ${R}$
+- The first row stores seven integers: n_I, n_J, n_K, L, w_1, w_2 and R.
 
-接下來的資訊分為三大部分，依序分別是 ${n_K}$ 種班型的各時段排班狀況、 ${n_J}$ 天中各時段的人力需求以及 ${R}$ 項休假需求。
+- The following information is divided into three parts:
 
-- 第一部分
-    - 從第2列至第 ${n_K + 2}$ 列
-    - 每列各存放 24 個整數，其中第 ${k + 1}$ 列依序存著 ${s_{k,1}、s_{k,2}}$ 直到 ${s_{k,24}}$，表示第 k 號班型需要值班的時段，若為 1 表示要值班，若為 0 則否。
-    - 第 ${n_K + 2}$ 列會固定存放第 0 號班型(休假)的排班狀態， 也就是 {0, 0, 0, 0, ..., 0}。
+    1. Scheduling status of each time period for the ${n_K}$ types of shifts
+        - Each column contains 24 integers, indicating the time periods that the k-th shift type needs to be on duty.
+        - The ${n_K + 2}$th column will always store the scheduling status of the 0th shift (complete leave)
 
-- 第二部分
-    - 從第 ${n_K +3}$ 列至第 ${n_K +n_J +2}$ 列
-    - 每列各存放 24 個整數，其中第 ${n_K + 2 + j}$ 列依序存著 ${d_{j,1}、d_{j,2}}$ 直到 ${d_{j,24}}$，表示第 ${j}$ 天各時段的人力需求。 
-    - 請注意在資料被輸入時，其格式是圖 2 的轉置(transpose)，亦即在圖 2 中一列 是一個時段、一欄是一天，而在輸入資料中一列是一天，一欄則是一個時段。
+    2. Manpower demand for each time period on ${n_J}$ days
+        - Each column contains 24 integers, indicating the manpower demand for each time period on the ${j}$th day.
+        - In the input data, one column represents a day and one row represents a time period.
 
-- 第三部分
-    - 從第 ${n_K +n_J +3}$ 列至第 ${n_K +n_J +4}$ 列，也就是最後的兩列資料。
-    - 每列各存放 R 個整數，其中第 ${n_K +n_J +3}$ 列依序存著 ${i_1、i_2}$ 直到 ${i_R}$，依序表示提出請假需求的員工編號;第 ${n_K + n_J + 4}$ 列依序存著 ${j_1、j_2}$ 直到 ${j_R}$，依序表示第 ${i_1、i_2}$ 直到 ${i_R}$ 號員工希望請假的日期，舉例來說，若 ${i_1 = 3}$ 且 ${j_1 = 5}$，代表第一項請假需求為第三號員工希望在第五天請假。
+    3. Vacation requests
+        - Each row contains R integers, which sequentially represent the employee numbers of the leave requests; sequentially representing the dates that the employees hope to take leave.
+        -  For example, if ${i_1 = 3}$ and ${j_1 = 5}$, it means that the first leave request is from the third employee who hopes to take leave on the fifth day.
 
-- 變數值域
+- Variable Range
     - ${10 ≤ n_I ≤ 100}$
     - ${n_J}$ ∈ {28, 29 ,30, 31}
     - ${5 ≤ n_K ≤ 30}$
@@ -47,5 +42,3 @@
     - ${0 ≤ R ≤ n_in_j}$
     - ${s_{k,t}}$ ∈ {0, 1}
     - ${0 ≤ d_{j,t} ≤ n_I}$
-    - ${1 ≤ i_r ≤ n_I}$
-    - ${1 ≤ j_r ≤ n_J}$
