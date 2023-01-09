@@ -1,6 +1,6 @@
 # 2022 Programming Design - Midterm Project
 - 🍒 This is the midterm project of Programming Design instructed by Prof. Ling-Chieh Kung at National Taiwan University
-- 🏅 Our program is rated 1st in 02 class, 4th / 50 teams
+- 🏅 Our program is rated ${1st}$ in 02 class, ${4th}$ ${/}$ ${50}$ teams
 
 ## Goal
 
@@ -10,7 +10,7 @@
 
 ## Limitation
 
-- Each employee must have at least L days of complete leave during the next n_J days of scheduling.
+- Each employee must have at least ${L}$ days of complete leave during the next ${n_J}$ days of scheduling.
 - Each employee must have at least one day of complete leave within every consecutive seven days.
 - Each employee can only be assigned exactly one shift type per day.
 
@@ -25,7 +25,7 @@
         - The ${n_K + 2}$ th column will always store the scheduling status of the 0th shift (complete leave)
 
     2. Manpower demand for each time period on ${n_J}$ days
-        - Each column contains 24 integers, indicating the manpower demand for each time period on the ${j}$th day.
+        - Each column contains 24 integers, indicating the manpower demand for each time period on the ${j}$ th day.
         - In the input data, one column represents a day and one row represents a time period.
 
     3. Vacation requests
