@@ -1,6 +1,6 @@
 # 2022 Programming Design - Midterm Project
 - 🍒 This is the midterm project of Programming Design instructed by Prof. Ling-Chieh Kung at National Taiwan University
-- 🏅 Our program is rated ${1st}$ in 02 class, ${4th}$ ${/}$ ${50}$ teams
+- 🏅 Our program is rated ${1st}$ in 02 class, ${4th}$ in 50 teams
 
 ## Goal
 
