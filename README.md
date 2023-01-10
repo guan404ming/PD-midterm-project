@@ -1,5 +1,5 @@
-# 2022 Programming Design - Midterm Project
-- 🍒 This is the midterm project of Programming Design instructed by Prof. Ling-Chieh Kung at National Taiwan University
+# Scheduling Optimization
+- 🍒 This is the midterm project of Programming Design instructed by Prof. Ling-Chieh Kung and Prof. Cheng-Yuan Ho at National Taiwan University
 - 🏅 Our program is rated ${1st}$ in 02 class, ${4th}$ in 50 teams
 
 ## Goal
@@ -8,7 +8,7 @@
 - This program must schedule a shift schedule for  ${n_J}$  days in the following month.
 - ${ min }$ ( labor shortage + ${w1}$ × unfulfilled leave requests + ${w2}$ × total excess overtime hours )
 
-## Limitation
+## Rules
 
 - Each employee must have at least ${L}$ days of complete leave during the next ${n_J}$ days of scheduling.
 - Each employee must have at least one day of complete leave within every consecutive seven days.
