@@ -1,7 +1,7 @@
 # Scheduling Optimization
-- 🍒  midterm project of Programming Design at National Taiwan University
-- 👨‍💻 instructed by Prof. Ling-Chieh Kung and Prof. Cheng-Yuan Ho
-- 🏅 rated ${1st}$ in 02 class, ${4th}$ in 50 teams
+- 🍒 Midterm Project of Programming Design at National Taiwan University
+- 👨‍💻 Instructed by Prof. Ling-Chieh Kung and Prof. Cheng-Yuan Ho
+- 🏅 Rated ${1st}$ in 02 class, ${4th}$ in 50 teams
 
 ## Goal
 
